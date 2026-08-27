@@ -1,0 +1,64 @@
+version: 2
+
+sources:
+  - name: pue_raw
+    description: Raw PUE benchmark data from Supabase
+    database: postgres
+    schema: public
+    tables:
+      - name: raw_pue_data
+        description: Raw staging table for collected PUE data
+        columns:
+          - name: id
+            description: Unique identifier
+            tests:
+              - unique
+              - not_null
+
+          - name: company
+            description: Company name
+            tests:
+              - not_null
+
+          - name: pue_value
+            description: Power Usage Effectiveness value
+            tests:
+              - not_null
+
+      - name: dim_company
+        description: Company dimension table
+        columns:
+          - name: company_id
+            description: Unique company identifier
+            tests:
+              - unique
+              - not_null
+
+      - name: dim_location
+        description: Location dimension table
+        columns:
+          - name: location_id
+            description: Unique location identifier
+            tests:
+              - unique
+              - not_null
+
+      - name: fact_efficiency
+        description: Efficiency metrics fact table
+        columns:
+          - name: fact_id
+            description: Unique fact identifier
+            tests:
+              - unique
+              - not_null
+
+          - name: pue_value
+            description: Power Usage Effectiveness value
+            tests:
+              - not_null
+              - accepted_values:
+                  values: ['1.0', '1.5', '2.0', '2.5', '3.0']
+                  quote: false
+                  config:
+                    severity: warn
+                    where: "pue_value >= 1.0 AND pue_value <= 3.0"

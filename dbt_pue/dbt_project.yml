@@ -1,0 +1,42 @@
+name: 'pue_benchmark'
+version: '1.0.0'
+config-version: 2
+
+# Project configuration
+profile: 'pue_benchmark'
+
+# Directories
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# Model configurations
+models:
+  pue_benchmark:
+    # Staging models
+    staging:
+      +materialized: view
+      +schema: staging
+
+    # Mart models
+    marts:
+      +materialized: table
+      +schema: marts
+
+# Seeds
+seeds:
+  pue_benchmark:
+    +schema: seeds
+
+# Tests
+tests:
+  pue_benchmark:
+    +store_failures: true
