@@ -1,0 +1,71 @@
+
+================================================================================
+Collection Run: 2026-08-28 10:48:26
+================================================================================
+Scraper: Global Hyperscalers
+Companies Processed: 6
+Records Extracted: 187
+Companies with Data: 6
+================================================================================
+
+
+================================================================================
+Collection Run: 2026-08-28 11:14:07
+================================================================================
+Scraper: Indian Operators
+Companies Processed: 12
+Records Extracted: 160
+Companies with Data: 12
+Facilities with PUE: 160
+================================================================================
+
+
+================================================================================
+Collection Run: 2026-08-28 11:17:41
+================================================================================
+Scraper: Global Colocation
+Companies Processed: 6
+Records Extracted: 25
+Companies with Data: 5
+================================================================================
+
+
+================================================================================
+Collection Run: 2026-08-28 18:27:12
+================================================================================
+Total Facilities: 23
+Total Companies: 23
+Companies with PUE: 23
+Average PUE (All): 1.19
+Average PUE (Hyperscalers): 1.138
+Average PUE (Indian): 1.202
+Average PUE (Colocation): 1.224
+Average Renewable %: 75.5
+Records with Operating PUE: 12
+Records with Design PUE: 3
+Records with TTM PUE: 4
+Records with Estimated PUE: 4
+Total Capacity (MW): 53.0
+Year Range: 2026-2027
+================================================================================
+
+
+================================================================================
+Collection Run: 2026-08-28 18:27:58
+================================================================================
+Total Facilities: 23
+Total Companies: 23
+Companies with PUE: 23
+Average PUE (All): 1.19
+Average PUE (Hyperscalers): 1.138
+Average PUE (Indian): 1.202
+Average PUE (Colocation): 1.224
+Average Renewable %: 75.5
+Records with Operating PUE: 12
+Records with Design PUE: 3
+Records with TTM PUE: 4
+Records with Estimated PUE: 4
+Total Capacity (MW): 53.0
+Year Range: 2026-2027
+================================================================================
+

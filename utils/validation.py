@@ -44,8 +44,8 @@ class DataValidator:
     @staticmethod
     def validate_renewable_pct(value: int) -> bool:
         """Validate renewable energy percentage."""
-        if value is None:
-            return False
+        if value is None or pd.isna(value):
+            return True  # Renewable % is optional
         try:
             value = int(value)
             return RENEWABLE_MIN <= value <= RENEWABLE_MAX
@@ -55,7 +55,7 @@ class DataValidator:
     @staticmethod
     def validate_wue(value: float) -> bool:
         """Validate WUE value."""
-        if value is None:
+        if value is None or pd.isna(value):
             return True  # WUE is optional
         try:
             value = float(value)
@@ -66,7 +66,7 @@ class DataValidator:
     @staticmethod
     def validate_capacity(value: float) -> bool:
         """Validate capacity in MW."""
-        if value is None:
+        if value is None or pd.isna(value):
             return True  # Capacity is optional
         try:
             value = float(value)
@@ -77,7 +77,7 @@ class DataValidator:
     @staticmethod
     def validate_rack_count(value: int) -> bool:
         """Validate rack count."""
-        if value is None:
+        if value is None or pd.isna(value):
             return True  # Rack count is optional
         try:
             value = int(value)
@@ -88,7 +88,7 @@ class DataValidator:
     @staticmethod
     def validate_year(value: int) -> bool:
         """Validate year is reasonable."""
-        if value is None:
+        if value is None or pd.isna(value):
             return True  # Year is optional
         try:
             value = int(value)

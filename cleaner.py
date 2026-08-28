@@ -241,27 +241,34 @@ class DataCleaner:
         Returns:
             Dictionary with summary stats
         """
+        if len(df) == 0:
+            return {
+                "Total Facilities": 0,
+                "Total Companies": 0,
+                "Status": "No valid records after cleaning",
+            }
+
         stats = {
             "Total Facilities": len(df),
             "Total Companies": df['company'].nunique(),
             "Companies with PUE": len(df[df['pue_value'].notna()]),
-            "Average PUE (All)": round(df['pue_value'].mean(), 3),
+            "Average PUE (All)": round(df['pue_value'].mean(), 3) if df['pue_value'].notna().any() else "N/A",
             "Average PUE (Hyperscalers)": round(
                 df[df['tier'].str.contains('Tier 1', na=False)]['pue_value'].mean(), 3
-            ),
+            ) if len(df[df['tier'].str.contains('Tier 1', na=False)]) > 0 else "N/A",
             "Average PUE (Indian)": round(
                 df[df['tier'].str.contains('Tier 2', na=False)]['pue_value'].mean(), 3
-            ),
+            ) if len(df[df['tier'].str.contains('Tier 2', na=False)]) > 0 else "N/A",
             "Average PUE (Colocation)": round(
                 df[df['tier'].str.contains('Tier 3', na=False)]['pue_value'].mean(), 3
-            ),
-            "Average Renewable %": round(df['renewable_pct'].mean(), 1),
+            ) if len(df[df['tier'].str.contains('Tier 3', na=False)]) > 0 else "N/A",
+            "Average Renewable %": round(df['renewable_pct'].mean(), 1) if df['renewable_pct'].notna().any() else "N/A",
             "Records with Operating PUE": len(df[df['pue_type'] == 'operating']),
             "Records with Design PUE": len(df[df['pue_type'] == 'design']),
             "Records with TTM PUE": len(df[df['pue_type'] == 'TTM']),
             "Records with Estimated PUE": len(df[df['pue_type'] == 'estimated']),
-            "Total Capacity (MW)": round(df['capacity_mw'].sum(), 1),
-            "Year Range": f"{int(df['year'].min())}-{int(df['year'].max())}",
+            "Total Capacity (MW)": round(df['capacity_mw'].sum(), 1) if df['capacity_mw'].notna().any() else "N/A",
+            "Year Range": f"{int(df['year'].min())}-{int(df['year'].max())}" if df['year'].notna().any() else "N/A",
         }
 
         return stats
