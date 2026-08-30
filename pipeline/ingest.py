@@ -5,11 +5,16 @@ Implements star schema with dimension and fact tables.
 """
 
 import os
+import sys
 import pandas as pd
 from pathlib import Path
 from typing import Dict, List, Optional
 from dotenv import load_dotenv
 from supabase import create_client, Client
+
+# Add project root to Python path
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
 
 from config.constants import BENCHMARK_CSV
 from utils.logger import setup_logger
@@ -67,12 +72,23 @@ class SupabaseIngestor:
         """
         logger.info("Ingesting raw data")
 
-        # Convert DataFrame to list of dicts
-        records = df.to_dict('records')
+        # Define columns that exist in raw_pue_data table (from schema.sql)
+        raw_columns = [
+            'company', 'facility_name', 'city', 'country', 'region',
+            'year', 'pue_value', 'pue_type', 'capacity_mw', 'rack_count',
+            'renewable_pct', 'wue_l_per_kwh', 'source_url', 'source_type',
+            'extraction_date', 'tier', 'avg_temp_celsius', 'country_code'
+        ]
 
-        # Handle NaN values
+        # Select only columns that exist in the table
+        df_filtered = df[[col for col in raw_columns if col in df.columns]].copy()
+
+        # Convert DataFrame to list of dicts
+        records = df_filtered.to_dict('records')
+
+        # Handle NaN values - replace with None for JSON serialization
         for record in records:
-            for key, value in record.items():
+            for key, value in list(record.items()):
                 if pd.isna(value):
                     record[key] = None
 
@@ -236,16 +252,31 @@ class SupabaseIngestor:
                 logger.warning(f"No company_id for {row['company']}")
                 continue
 
+            # Helper function to convert values safely
+            def safe_value(value, converter=None):
+                if pd.isna(value):
+                    return None
+                if converter:
+                    return converter(value)
+                return value
+
             record = {
                 'company_id': company_id,
-                'location_id': location_id,
-                'facility_name': row.get('facility_name'),
-                'year': int(row['year']) if not pd.isna(row['year']) else None,
+                'location_id': location_id if location_id else None,
+                'facility_name': safe_value(row.get('facility_name')),
+                'year': safe_value(row.get('year'), int),
                 'pue_value': float(row['pue_value']),
-                'pue_type': row.get('pue_type'),
-                'capacity_mw': float(row['capacity_mw']) if not pd.isna(row.get('capacity_mw')) else None,
-                'rack_count': int(row['rack_count']) if not pd.isna(row.get('rack_count')) else None,
-                'renewable_pct': int(row['renewable_pct']) if not pd.isna(row.get('renewable_pct')) else None,
+                'pue_type': safe_value(row.get('pue_type')),
+                'capacity_mw': safe_value(row.get('capacity_mw'), float),
+                'rack_count': safe_value(row.get('rack_count'), int),
+                'renewable_pct': safe_value(row.get('renewable_pct'), int),
+                'wue_l_per_kwh': safe_value(row.get('wue_l_per_kwh'), float),
+                'source_url': safe_value(row.get('source_url')),
+                'source_type': safe_value(row.get('source_type')),
+                'extraction_date': safe_value(row.get('extraction_date')),
+            }
+
+            records.append(record)
                 'wue_l_per_kwh': float(row['wue_l_per_kwh']) if not pd.isna(row.get('wue_l_per_kwh')) else None,
                 'source_url': row.get('source_url'),
                 'source_type': row.get('source_type'),
